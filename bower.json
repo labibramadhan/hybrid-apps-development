@@ -1,0 +1,22 @@
+{
+  "name": "cbt-exp1",
+  "description": "CBT Experiment 1 with react + webpack + babel + electron",
+  "main": "main.js",
+  "authors": [
+    "Muhammad Labib Ramadhan"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "cbt",
+    "experiment"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {}
+}

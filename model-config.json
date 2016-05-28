@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "sources": [
+      "./models"
+    ]
+  },
+  "LocalTodo": {
+    "dataSource": "LocalTodo"
+  },
+  "RemoteTodo": {
+    "dataSource": "RemoteTodo"
+  }
+}

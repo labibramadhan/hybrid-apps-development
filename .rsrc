@@ -1,0 +1,10 @@
+{
+  "apiEndpoint": "/api",
+  "swaggerEndpoint": "/explorer",
+  "modules": {
+    "rs-todo": {
+      "routes": "/lib/routes",
+      "models": "/lib/models"
+    }
+  }
+}

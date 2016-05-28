@@ -1,0 +1,17 @@
+{
+  "name": "Todo",
+  "base": "PersistedModel",
+  "trackChanges": true,
+  "properties": {
+    "id": {
+      "id": true,
+      "type": "string",
+      "defaultFn": "guid"
+    },
+    "title": "string",
+    "completed": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

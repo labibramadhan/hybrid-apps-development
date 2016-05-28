@@ -1,0 +1,11 @@
+<widget id="com.risenlabs.cbt" version="0.0.1">
+    <name>Computer Based Test</name>
+    <description>
+        A sample Apache Cordova application that responds to the deviceready event.
+    </description>
+    <author email="mlabib.ramadhan@gmail.com" href="http://risen-labs.com">
+        Risen Labs Team
+    </author>
+    <content src="public/index.html" />
+    <access origin="*" />
+</widget>
