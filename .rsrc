@@ -3,6 +3,7 @@
   "swaggerEndpoint": "/explorer",
   "modules": {
     "rs-todo": {
+      "boot": "/lib/server/boot.js",
       "routes": "/lib/routes",
       "models": "/lib/models"
     }

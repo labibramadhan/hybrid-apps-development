@@ -1,1 +1,1 @@
-export default socket = require('socket.io-client')('http://localhost:1234');
+export default socket = require('socket.io-client')();

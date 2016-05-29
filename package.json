@@ -1,8 +1,8 @@
 {
-  "name": "cbt-exp1",
-  "productName": "Computer Based Test",
+  "name": "hybrid-apps-development",
+  "productName": "Hybrid Apps Development",
   "version": "1.0.0",
-  "description": "CBT Experiment 1 with react + webpack + babel + electron",
+  "description": "Hybrid apps development using React, Electron, Cordova and Loopback.",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,23 +15,19 @@
     "babel-electron": "babel Electron.jsx --watch --presets es2015 --out-file main.js"
   },
   "keywords": [
-    "cbt",
-    "experiment"
+    "hybrid"
   ],
   "author": "Muhammad Labib Ramadhan",
   "license": "ISC",
   "dependencies": {
     "connect": "*",
-    "electron-packager": "*",
-    "electron-prebuilt": "*",
-    "electron-rebuild": "*",
     "express": "*",
     "formsy-material-ui": "*",
     "formsy-react": "*",
     "history": "*",
     "loopback": "*",
     "loopback-boot": "*",
-    "loopback-explorer": "*",
+    "loopback-component-explorer": "*",
     "loopback-connector": "*",
     "loopback-connector-sqlite": "*",
     "loopback-datasource-juggler": "*",
@@ -44,7 +40,6 @@
     "react-tap-event-plugin": "*",
     "reflux": "*",
     "socket.io": "*",
-    "socket.io-browserify": "^0.9.6",
     "socket.io-client": "*",
     "underscore": "*"
   },
@@ -57,9 +52,9 @@
     "bcrypt": "*",
     "browserify": "*",
     "coffee-script": "*",
-    "devtron": "^1.1.2",
+    "devtron": "*",
     "electron-packager": "*",
-    "electron-prebuilt": "*",
+    "electron-prebuilt": "^1.2.0",
     "electron-rebuild": "*",
     "events": "*",
     "gulp": "*",

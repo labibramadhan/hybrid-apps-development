@@ -2,9 +2,9 @@
 
 //execute();
 
-import io from 'socket.io-browserify';
+import io from 'socket.io-client';
 
-const socket = io.connect('http://localhost:1234');
+const socket = io.connect();
 
 socket.on('connect', function(){
     console.log("Connected!");
@@ -18,4 +18,6 @@ socket.on('event', function(data){
 socket.on('disconnect', function(){
     console.log("Disconnected");
 });
-socket.emit('todos:create', {ada: true});
+socket.on('LocalTodo:changed', function(){
+    console.log("LocalTodo changed!");
+});
