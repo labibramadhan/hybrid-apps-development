@@ -20,6 +20,7 @@
   "author": "Muhammad Labib Ramadhan",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.11.1",
     "connect": "*",
     "express": "*",
     "formsy-material-ui": "*",
@@ -29,7 +30,7 @@
     "loopback-boot": "*",
     "loopback-component-explorer": "*",
     "loopback-connector": "*",
-    "loopback-connector-sqlite": "*",
+    "loopback-connector-mongodb": "^1.15.2",
     "loopback-datasource-juggler": "*",
     "material-ui": "*",
     "menubar": "*",
@@ -40,7 +41,9 @@
     "react-tap-event-plugin": "*",
     "reflux": "*",
     "socket.io": "*",
+    "socket.io-browserify": "^0.9.6",
     "socket.io-client": "*",
+    "sqlite3": "^3.1.4",
     "underscore": "*"
   },
   "devDependencies": {
@@ -53,6 +56,7 @@
     "browserify": "*",
     "coffee-script": "*",
     "devtron": "*",
+    "electron-connect": "^0.4.2",
     "electron-packager": "*",
     "electron-prebuilt": "^1.2.0",
     "electron-rebuild": "*",

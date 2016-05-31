@@ -1,16 +1,19 @@
 import _ from 'underscore';
 import fs from 'fs';
-import express from "express";
 import loopback from 'loopback';
 import explorer from 'loopback-component-explorer';
+import {client} from 'electron-connect';
 
 const lbApp = loopback();
+
+lbApp.set('legacyExplorer', false);
+
+let lbAppServer;
 
 export const io = require('socket.io')();
 
 const app = require('electron').app;
 const BrowserWindow = require('electron').BrowserWindow;
-
 const publicDir = __dirname + '/www/public';
 
 const embedApFile = (file, type, params) => {
@@ -46,7 +49,10 @@ const embedApp = (params, type) => {
     }
 };
 
-const ds = loopback.createDataSource('memory');
+const ds = loopback.createDataSource({
+    connector: loopback.Memory,
+    file: "db.json"
+});
 
 const config = JSON.parse(fs.readFileSync('.rsrc', 'utf8'));
 
@@ -67,12 +73,14 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
     lbApp.use(config.apiEndpoint, loopback.rest());
+    lbApp.use(loopback.static(publicDir));
+    lbApp.use(loopback.compress());
     explorer(lbApp, {basePath: config.apiEndpoint, mountPath: config.swaggerEndpoint});
     lbApp.use(config.swaggerEndpoint, explorer.routes(lbApp, {basePath: config.apiEndpoint}));
+    lbApp.use(loopback.urlNotFound());
+    lbApp.use(loopback.errorHandler());
 
-    lbApp.use(express.static(publicDir));
-
-    const lbAppServer = lbApp.listen(1234);
+    lbAppServer = lbApp.listen(1234);
 
     _.each(config.modules, (cfg, module) => {
         if (typeof cfg.boot !== "undefined") {
@@ -82,10 +90,16 @@ app.on('ready', function () {
 
     io.attach(lbAppServer);
 
-    let mainWindow = new BrowserWindow({width: 800, height: 400});
-    mainWindow.loadURL('http://localhost:1234/');
+    let mainWindow = new BrowserWindow({width: 1100, height: 700});
+    mainWindow.loadURL('http://localhost:8080/');
     mainWindow.openDevTools();
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+    client.create(mainWindow);
+});
+
+app.on('before-quit', function () {
+    lbAppServer.close();
+    app.exit(1);
 });

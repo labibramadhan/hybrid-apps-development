@@ -13,10 +13,6 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
-var _express = require('express');
-
-var _express2 = _interopRequireDefault(_express);
-
 var _loopback = require('loopback');
 
 var _loopback2 = _interopRequireDefault(_loopback);
@@ -25,15 +21,20 @@ var _loopbackComponentExplorer = require('loopback-component-explorer');
 
 var _loopbackComponentExplorer2 = _interopRequireDefault(_loopbackComponentExplorer);
 
+var _electronConnect = require('electron-connect');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var lbApp = (0, _loopback2.default)();
+
+lbApp.set('legacyExplorer', false);
+
+var lbAppServer = void 0;
 
 var io = exports.io = require('socket.io')();
 
 var app = require('electron').app;
 var BrowserWindow = require('electron').BrowserWindow;
-
 var publicDir = __dirname + '/www/public';
 
 var embedApFile = function embedApFile(file, type, params) {
@@ -69,7 +70,10 @@ var embedApp = function embedApp(params, type) {
     }
 };
 
-var ds = _loopback2.default.createDataSource('memory');
+var ds = _loopback2.default.createDataSource({
+    connector: _loopback2.default.Memory,
+    file: "db.json"
+});
 
 var config = JSON.parse(_fs2.default.readFileSync('.rsrc', 'utf8'));
 
@@ -90,12 +94,14 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
     lbApp.use(config.apiEndpoint, _loopback2.default.rest());
+    lbApp.use(_loopback2.default.static(publicDir));
+    lbApp.use(_loopback2.default.compress());
     (0, _loopbackComponentExplorer2.default)(lbApp, { basePath: config.apiEndpoint, mountPath: config.swaggerEndpoint });
     lbApp.use(config.swaggerEndpoint, _loopbackComponentExplorer2.default.routes(lbApp, { basePath: config.apiEndpoint }));
+    lbApp.use(_loopback2.default.urlNotFound());
+    lbApp.use(_loopback2.default.errorHandler());
 
-    lbApp.use(_express2.default.static(publicDir));
-
-    var lbAppServer = lbApp.listen(1234);
+    lbAppServer = lbApp.listen(1234);
 
     _underscore2.default.each(config.modules, function (cfg, module) {
         if (typeof cfg.boot !== "undefined") {
@@ -105,10 +111,16 @@ app.on('ready', function () {
 
     io.attach(lbAppServer);
 
-    var mainWindow = new BrowserWindow({ width: 800, height: 400 });
-    mainWindow.loadURL('http://localhost:1234/');
+    var mainWindow = new BrowserWindow({ width: 1100, height: 700 });
+    mainWindow.loadURL('http://localhost:8080/');
     mainWindow.openDevTools();
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+    _electronConnect.client.create(mainWindow);
+});
+
+app.on('before-quit', function () {
+    lbAppServer.close();
+    app.exit(1);
 });
