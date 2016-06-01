@@ -40,8 +40,8 @@
     "react-router-named-routes": "*",
     "react-tap-event-plugin": "*",
     "reflux": "*",
+    "rhaboo": "^3.2.2",
     "socket.io": "*",
-    "socket.io-browserify": "^0.9.6",
     "socket.io-client": "*",
     "sqlite3": "^3.1.4",
     "underscore": "*"
@@ -55,14 +55,19 @@
     "bcrypt": "*",
     "browserify": "*",
     "coffee-script": "*",
+    "del": "^2.2.0",
     "devtron": "*",
     "electron-connect": "^0.4.2",
     "electron-packager": "*",
     "electron-prebuilt": "^1.2.0",
     "electron-rebuild": "*",
     "events": "*",
+    "glob": "^7.0.3",
     "gulp": "*",
+    "gulp-babel": "^6.1.2",
     "gulp-connect": "*",
-    "npm-run-all": "*"
+    "gulp-util": "^3.0.7",
+    "npm-run-all": "*",
+    "uglifyify": "^3.0.1"
   }
 }

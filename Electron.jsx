@@ -14,7 +14,7 @@ export const io = require('socket.io')();
 
 const app = require('electron').app;
 const BrowserWindow = require('electron').BrowserWindow;
-const publicDir = __dirname + '/www/public';
+const publicDir = __dirname + '/www';
 
 const embedApFile = (file, type, params) => {
     if (fs.statSync(file).isFile()) {

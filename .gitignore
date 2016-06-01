@@ -4,6 +4,7 @@
 #NODE JS
 node_modules/*
 !node_modules/rs*
+node_modules/rs*/lib
 node_modules/rs*/node_modules/*
 
 bower_components

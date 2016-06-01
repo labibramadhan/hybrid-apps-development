@@ -1,15 +1,44 @@
 var gulp = require('gulp'),
     browserify = require('browserify'),
     babelify = require('babelify'),
+    uglifyify = require('uglifyify'),
+    babel = require('gulp-babel'),
+    glob = require('glob'),
+    del = require('del'),
+    util = require('gulp-util'),
     connect = require('gulp-connect'),
     boot = require('loopback-boot'),
     fs = require('fs'),
     electron = require('electron-connect').server.create();
 
-var appDir = __dirname + "/www/app";
-var pubDir = __dirname + "/www/public";
+var appDir = __dirname + "/app";
+var pubDir = __dirname + "/www";
 
-gulp.task('browserify', function () {
+gulp.task('babel', function (cb) {
+    var promises = [];
+    glob.sync('node_modules/rs-*').forEach(function (filePath) {
+        if (fs.statSync(filePath).isDirectory()) {
+            promises.push(new Promise(function (resolve, reject) {
+                var dest, pipeline;
+                dest = filePath.concat('/lib');
+                del([dest]).then(function () {
+                    pipeline = gulp.src(filePath.concat('/src/**/*.js'))
+                        .pipe(babel({presets: ['es2015', 'react']}))
+                        .pipe(gulp.dest(dest));
+                    pipeline.on('end', function () {
+                        resolve();
+                    });
+                });
+            }));
+        }
+    });
+    Promise.all(promises).then(function () {
+        cb();
+    });
+});
+
+gulp.task('browserify', ['babel'], function (cb) {
+    process.env.NODE_ENV = 'production';
     var b, out;
     b = browserify({
         basedir: appDir,
@@ -20,36 +49,35 @@ gulp.task('browserify', function () {
     b.add(appDir + '/Index.jsx');
 
     out = fs.createWriteStream(pubDir + "/bundle.js");
-    b.transform(babelify).bundle().pipe(out).on('finish', connect.reload);
+    b.transform(babelify).transform({
+        global: true
+    }, 'uglifyify').bundle().pipe(out).on('finish', function () {
+        cb();
+    });
 });
 
-gulp.task('electron', function () {
-    electron.restart();
-});
-
-gulp.task('connect', function () {
+gulp.task('connect', ['browserify'], function () {
     connect.server({
-        root: 'www/public',
+        root: pubDir,
         livereload: true
     });
     electron.start();
 });
 
-gulp.task('js', function () {
-    gulp.src('./www/**/*.js')
+gulp.task('livereload', ['browserify'], function () {
+    gulp.src(['./www/**/*.js', './www/**/*.html'])
         .pipe(connect.reload());
 });
 
-gulp.task('html', function () {
-    gulp.src('./www/**/*.html')
-        .pipe(connect.reload());
+gulp.task('electron', ['browserify'], function () {
+    electron.restart();
 });
 
-gulp.task('watch', function () {
-    gulp.watch(['./www/**/*.html'], ['html']);
-    gulp.watch(['./www/**/*.js'], ['js']);
-    gulp.watch(['./www/**/*.jsx', './node_modules/rs-*/lib/**/**/*.js'], ['browserify']);
-    gulp.watch(['main.js', './node_modules/rs-*/lib/models/*.js', './node_modules/rs-*/lib/routes/*.js', './node_modules/rs-*/lib/server/*.js', './node_modules/rs-*/lib/shared/*.js'], ['electron']);
+gulp.task('watch', ['browserify'], function () {
+    gulp.watch(['./www/**/*.html'], ['livereload']);
+    gulp.watch(['./node_modules/rs-*/src/**/*.js', '!./node_modules/rs-*/src/models/*.js', '!./node_modules/rs-*/src/routes/server/*.js', '!./node_modules/rs-*/src/server/*.js', '!./node_modules/rs-*/src/shared/*.js'], ['babel', 'browserify', 'livereload']);
+    gulp.watch(['./www/**/*.jsx'], ['browserify', 'livereload']);
+    gulp.watch(['main.js', './node_modules/rs-*/src/models/*.js', './node_modules/rs-*/src/routes/server/*.js', './node_modules/rs-*/src/server/*.js', './node_modules/rs-*/src/shared/*.js'], ['babel', 'browserify', 'livereload', 'electron']);
 });
 
-gulp.task('default', ['browserify', 'connect', 'watch']);
+gulp.task('default', ['babel', 'browserify', 'connect', 'watch']);

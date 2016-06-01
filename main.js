@@ -35,7 +35,7 @@ var io = exports.io = require('socket.io')();
 
 var app = require('electron').app;
 var BrowserWindow = require('electron').BrowserWindow;
-var publicDir = __dirname + '/www/public';
+var publicDir = __dirname + '/www';
 
 var embedApFile = function embedApFile(file, type, params) {
     if (_fs2.default.statSync(file).isFile()) {
