@@ -1,4 +1,6 @@
 {
+  "key": "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=!@#$%^&*()_+",
+  "env": "development",
   "apiEndpoint": "/api",
   "swaggerEndpoint": "/explorer",
   "modules": {

@@ -84,7 +84,7 @@ app.on('ready', function () {
 
     _.each(config.modules, (cfg, module) => {
         if (typeof cfg.boot !== "undefined") {
-            embedApp({passParams: {app: lbApp, io: io}, dir: module.concat(cfg.boot)}, 'boot');
+            embedApp({passParams: {app: lbApp, io: io, conf: config}, dir: module.concat(cfg.boot)}, 'boot');
         }
     });
 

@@ -68,6 +68,7 @@
     "gulp-connect": "*",
     "gulp-util": "^3.0.7",
     "npm-run-all": "*",
+    "simple-encryptor": "^1.1.0",
     "uglifyify": "^3.0.1"
   }
 }

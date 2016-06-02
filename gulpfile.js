@@ -38,21 +38,31 @@ gulp.task('babel', function (cb) {
 });
 
 gulp.task('browserify', ['babel'], function (cb) {
-    process.env.NODE_ENV = 'production';
-    var b, out;
-    b = browserify({
-        basedir: appDir,
-        cache: {},
-        packageCache: {}
-    });
+    fs.readFile('.rsrc', 'utf8', function (err, config) {
+        config = JSON.parse(config);
+        if (err) throw err;
 
-    b.add(appDir + '/Index.jsx');
+        process.env.NODE_ENV = config.env;
 
-    out = fs.createWriteStream(pubDir + "/bundle.js");
-    b.transform(babelify).transform({
-        global: true
-    }, 'uglifyify').bundle().pipe(out).on('finish', function () {
-        cb();
+        var b, out;
+        b = browserify({
+            basedir: appDir,
+            cache: {},
+            packageCache: {}
+        });
+
+        b.add(appDir + '/Index.jsx');
+
+        out = fs.createWriteStream(pubDir + "/bundle.js");
+        b.transform(babelify);
+        if (config.env == 'production') {
+            b.transform({
+                global: true
+            }, 'uglifyify');
+        }
+        b.bundle().pipe(out).on('finish', function () {
+            cb();
+        });
     });
 });
 
@@ -77,7 +87,7 @@ gulp.task('watch', ['browserify'], function () {
     gulp.watch(['./www/**/*.html'], ['livereload']);
     gulp.watch(['./node_modules/rs-*/src/**/*.js', '!./node_modules/rs-*/src/models/*.js', '!./node_modules/rs-*/src/routes/server/*.js', '!./node_modules/rs-*/src/server/*.js', '!./node_modules/rs-*/src/shared/*.js'], ['babel', 'browserify', 'livereload']);
     gulp.watch(['./www/**/*.jsx'], ['browserify', 'livereload']);
-    gulp.watch(['main.js', './node_modules/rs-*/src/models/*.js', './node_modules/rs-*/src/routes/server/*.js', './node_modules/rs-*/src/server/*.js', './node_modules/rs-*/src/shared/*.js'], ['babel', 'browserify', 'livereload', 'electron']);
+    gulp.watch(['main.js', './node_modules/rs-*/src/models/*.js', './node_modules/rs-*/src/routes/server/*.js', './node_modules/rs-*/src/server/*.js', './node_modules/rs-*/src/shared/*.js', './node_modules/rs-*/src/**/server.js'], ['babel', 'browserify', 'livereload', 'electron']);
 });
 
 gulp.task('default', ['babel', 'browserify', 'connect', 'watch']);
