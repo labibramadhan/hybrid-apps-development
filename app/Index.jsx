@@ -1,3 +1,3 @@
-import execute from 'rs-theme';
+import render from 'rs-theme';
 
-execute();
+render();

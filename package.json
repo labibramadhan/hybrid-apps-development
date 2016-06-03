@@ -33,14 +33,18 @@
     "loopback-connector-mongodb": "^1.15.2",
     "loopback-datasource-juggler": "*",
     "material-ui": "*",
+    "material-ui-table": "^0.1.2",
+    "material-ui-table-edit": "^2.0.4",
     "menubar": "*",
     "react": "*",
     "react-dom": "*",
+    "react-paginate": "^2.0.1",
     "react-router": "*",
     "react-router-named-routes": "*",
     "react-tap-event-plugin": "*",
     "reflux": "*",
     "rhaboo": "^3.2.2",
+    "rs-theme": "1.0.0",
     "socket.io": "*",
     "socket.io-client": "*",
     "sqlite3": "^3.1.4",
@@ -48,6 +52,7 @@
   },
   "devDependencies": {
     "babel-cli": "*",
+    "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-es2015": "*",
     "babel-preset-react": "*",
     "babel-preset-stage-0": "*",
@@ -67,8 +72,11 @@
     "gulp-babel": "^6.1.2",
     "gulp-connect": "*",
     "gulp-util": "^3.0.7",
+    "livereactload": "^2.2.3",
     "npm-run-all": "*",
+    "react-proxy": "^1.1.8",
     "simple-encryptor": "^1.1.0",
-    "uglifyify": "^3.0.1"
+    "uglifyify": "^3.0.1",
+    "watchify": "^3.7.0"
   }
 }

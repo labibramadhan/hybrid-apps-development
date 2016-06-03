@@ -85,7 +85,7 @@ gulp.task('electron', ['browserify'], function () {
 
 gulp.task('watch', ['browserify'], function () {
     gulp.watch(['./www/**/*.html'], ['livereload']);
-    gulp.watch(['./node_modules/rs-*/src/**/*.js', '!./node_modules/rs-*/src/models/*.js', '!./node_modules/rs-*/src/routes/server/*.js', '!./node_modules/rs-*/src/server/*.js', '!./node_modules/rs-*/src/shared/*.js'], ['babel', 'browserify', 'livereload']);
+    gulp.watch(['./app/**/*.jsx', './node_modules/rs-*/src/**/*.js', '!./node_modules/rs-*/src/models/*.js', '!./node_modules/rs-*/src/routes/server/*.js', '!./node_modules/rs-*/src/server/*.js', '!./node_modules/rs-*/src/shared/*.js'], ['babel', 'browserify', 'livereload']);
     gulp.watch(['./www/**/*.jsx'], ['browserify', 'livereload']);
     gulp.watch(['main.js', './node_modules/rs-*/src/models/*.js', './node_modules/rs-*/src/routes/server/*.js', './node_modules/rs-*/src/server/*.js', './node_modules/rs-*/src/shared/*.js', './node_modules/rs-*/src/**/server.js'], ['babel', 'browserify', 'livereload', 'electron']);
 });
