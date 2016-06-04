@@ -21,15 +21,14 @@ var _loopbackComponentExplorer = require('loopback-component-explorer');
 
 var _loopbackComponentExplorer2 = _interopRequireDefault(_loopbackComponentExplorer);
 
-var _electronConnect = require('electron-connect');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var lbApp = (0, _loopback2.default)();
 
 lbApp.set('legacyExplorer', false);
 
-var lbAppServer = void 0;
+var lbAppServer = void 0,
+    mainWindow = void 0;
 
 var io = exports.io = require('socket.io')();
 
@@ -37,7 +36,19 @@ var app = require('electron').app;
 var BrowserWindow = require('electron').BrowserWindow;
 var publicDir = __dirname + '/www';
 
-var embedApFile = function embedApFile(file, type, params) {
+var shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+    }
+});
+
+if (shouldQuit) {
+    app.quit();
+}
+
+var embedApFile = function embedApFile(name, file, type, params) {
     if (_fs2.default.statSync(file).isFile()) {
         var currentItem = require(file);
         switch (type) {
@@ -46,11 +57,17 @@ var embedApFile = function embedApFile(file, type, params) {
                 currentItem(params);
                 break;
             case 'models':
+                var model = void 0;
                 if (typeof currentItem.options === 'undefined') {
                     currentItem.options = {};
                 }
-                var model = params.ds.createModel(currentItem.name, currentItem.properties, currentItem.options);
-                params.app.model(model);
+                if (/.*\.user\.js$/.test(name)) {
+                    model = _loopback2.default.User.extend(currentItem.name, currentItem.properties, currentItem.settings);
+                    ds.attach(model);
+                } else {
+                    model = params.ds.createModel(currentItem.name, currentItem.properties, currentItem.options);
+                }
+                params.app.model(model, { datasource: ds });
                 break;
         }
     }
@@ -59,12 +76,12 @@ var embedApFile = function embedApFile(file, type, params) {
 var embedApp = function embedApp(params, type) {
     var targetPath = './node_modules/'.concat(params.dir);
     if (_fs2.default.statSync(targetPath).isFile()) {
-        embedApFile(targetPath, type, params.passParams);
+        embedApFile(targetPath.split('/').pop(), targetPath, type, params.passParams);
     } else {
         _fs2.default.readdir(targetPath, function (err, files) {
             files.forEach(function (file) {
                 var filePath = targetPath.concat("/".concat(file));
-                embedApFile(filePath, type, params.passParams);
+                embedApFile(file, filePath, type, params.passParams);
             });
         });
     }
@@ -74,6 +91,26 @@ var ds = _loopback2.default.createDataSource({
     connector: _loopback2.default.Memory,
     file: "db.json"
 });
+
+ds.attach(_loopback2.default.Email);
+lbApp.model(_loopback2.default.Email);
+ds.attach(_loopback2.default.Application);
+lbApp.model(_loopback2.default.Application);
+ds.attach(_loopback2.default.AccessToken);
+lbApp.model(_loopback2.default.AccessToken);
+ds.attach(_loopback2.default.User);
+ds.attach(_loopback2.default.RoleMapping);
+lbApp.model(_loopback2.default.RoleMapping);
+ds.attach(_loopback2.default.Role);
+lbApp.model(_loopback2.default.Role);
+ds.attach(_loopback2.default.ACL);
+lbApp.model(_loopback2.default.ACL);
+ds.attach(_loopback2.default.Scope);
+lbApp.model(_loopback2.default.Scope);
+ds.attach(_loopback2.default.Change);
+lbApp.model(_loopback2.default.Change);
+ds.attach(_loopback2.default.Checkpoint);
+lbApp.model(_loopback2.default.Checkpoint);
 
 var config = JSON.parse(_fs2.default.readFileSync('.rsrc', 'utf8'));
 
@@ -111,13 +148,15 @@ app.on('ready', function () {
 
     io.attach(lbAppServer);
 
-    var mainWindow = new BrowserWindow({ width: 1100, height: 700 });
-    mainWindow.loadURL('http://localhost:8080/');
+    mainWindow = new BrowserWindow({
+        width: 1100,
+        height: 700
+    });
+    mainWindow.loadURL('http://localhost:1235');
     mainWindow.openDevTools();
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
-    _electronConnect.client.create(mainWindow);
 });
 
 app.on('before-quit', function () {

@@ -10,9 +10,7 @@
     "build-android": "./node_modules/.bin/cordova build android",
     "desktop": "./node_modules/.bin/electron .",
     "android": "./node_modules/.bin/cordova run android",
-    "dev": "./node_modules/.bin/npm-run-all --parallel gulp babel-electron",
-    "gulp": "./node_modules/.bin/gulp default",
-    "babel-electron": "babel Electron.jsx --watch --presets es2015 --out-file main.js"
+    "dev": "./node_modules/.bin/gulp default"
   },
   "keywords": [
     "hybrid"
@@ -51,18 +49,14 @@
     "underscore": "*"
   },
   "devDependencies": {
-    "babel-cli": "*",
-    "babel-plugin-react-transform": "^2.0.2",
+    "babel-loader": "^6.2.4",
     "babel-preset-es2015": "*",
     "babel-preset-react": "*",
     "babel-preset-stage-0": "*",
-    "babelify": "*",
     "bcrypt": "*",
-    "browserify": "*",
     "coffee-script": "*",
     "del": "^2.2.0",
     "devtron": "*",
-    "electron-connect": "^0.4.2",
     "electron-packager": "*",
     "electron-prebuilt": "^1.2.0",
     "electron-rebuild": "*",
@@ -72,11 +66,10 @@
     "gulp-babel": "^6.1.2",
     "gulp-connect": "*",
     "gulp-util": "^3.0.7",
-    "livereactload": "^2.2.3",
     "npm-run-all": "*",
-    "react-proxy": "^1.1.8",
+    "react-hot-loader": "^1.3.0",
     "simple-encryptor": "^1.1.0",
-    "uglifyify": "^3.0.1",
-    "watchify": "^3.7.0"
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
   }
 }

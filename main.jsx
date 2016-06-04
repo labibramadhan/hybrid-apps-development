@@ -2,13 +2,12 @@ import _ from 'underscore';
 import fs from 'fs';
 import loopback from 'loopback';
 import explorer from 'loopback-component-explorer';
-import {client} from 'electron-connect';
 
 const lbApp = loopback();
 
 lbApp.set('legacyExplorer', false);
 
-let lbAppServer;
+let lbAppServer, mainWindow;
 
 export const io = require('socket.io')();
 
@@ -16,7 +15,19 @@ const app = require('electron').app;
 const BrowserWindow = require('electron').BrowserWindow;
 const publicDir = __dirname + '/www';
 
-const embedApFile = (file, type, params) => {
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+    }
+});
+
+if (shouldQuit) {
+    app.quit();
+}
+
+const embedApFile = (name, file, type, params) => {
     if (fs.statSync(file).isFile()) {
         let currentItem = require(file);
         switch (type) {
@@ -25,11 +36,17 @@ const embedApFile = (file, type, params) => {
                 currentItem(params);
                 break;
             case 'models':
+                let model;
                 if (typeof currentItem.options === 'undefined') {
                     currentItem.options = {};
                 }
-                let model = params.ds.createModel(currentItem.name, currentItem.properties, currentItem.options);
-                params.app.model(model);
+                if (/.*\.user\.js$/.test(name)) {
+                    model = loopback.User.extend(currentItem.name, currentItem.properties, currentItem.settings);
+                    ds.attach(model);
+                } else {
+                    model = params.ds.createModel(currentItem.name, currentItem.properties, currentItem.options);
+                }
+                params.app.model(model, {datasource: ds});
                 break;
         }
     }
@@ -38,12 +55,12 @@ const embedApFile = (file, type, params) => {
 const embedApp = (params, type) => {
     const targetPath = './node_modules/'.concat(params.dir);
     if (fs.statSync(targetPath).isFile()) {
-        embedApFile(targetPath, type, params.passParams);
+        embedApFile(targetPath.split('/').pop(), targetPath, type, params.passParams);
     } else {
         fs.readdir(targetPath, (err, files) => {
             files.forEach((file) => {
                 const filePath = targetPath.concat("/".concat(file));
-                embedApFile(filePath, type, params.passParams);
+                embedApFile(file, filePath, type, params.passParams);
             });
         });
     }
@@ -53,6 +70,26 @@ const ds = loopback.createDataSource({
     connector: loopback.Memory,
     file: "db.json"
 });
+
+ds.attach(loopback.Email);
+lbApp.model(loopback.Email);
+ds.attach(loopback.Application);
+lbApp.model(loopback.Application);
+ds.attach(loopback.AccessToken);
+lbApp.model(loopback.AccessToken);
+ds.attach(loopback.User);
+ds.attach(loopback.RoleMapping);
+lbApp.model(loopback.RoleMapping);
+ds.attach(loopback.Role);
+lbApp.model(loopback.Role);
+ds.attach(loopback.ACL);
+lbApp.model(loopback.ACL);
+ds.attach(loopback.Scope);
+lbApp.model(loopback.Scope);
+ds.attach(loopback.Change);
+lbApp.model(loopback.Change);
+ds.attach(loopback.Checkpoint);
+lbApp.model(loopback.Checkpoint);
 
 const config = JSON.parse(fs.readFileSync('.rsrc', 'utf8'));
 
@@ -90,16 +127,19 @@ app.on('ready', function () {
 
     io.attach(lbAppServer);
 
-    let mainWindow = new BrowserWindow({width: 1100, height: 700});
-    mainWindow.loadURL('http://localhost:8080/');
+    mainWindow = new BrowserWindow({
+        width: 1100,
+        height: 700
+    });
+    mainWindow.loadURL('http://localhost:1235');
     mainWindow.openDevTools();
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
-    client.create(mainWindow);
 });
 
 app.on('before-quit', function () {
     lbAppServer.close();
     app.exit(1);
 });
+

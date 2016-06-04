@@ -1,8 +1,16 @@
 {
   "ids": {
-    "localTodo": 28
+    "User": 1,
+    "user": 2,
+    "localTodo": 1,
+    "AccessToken": 2
   },
   "models": {
-    "localTodo": {}
+    "User": {},
+    "user": {},
+    "localTodo": {},
+    "AccessToken": {
+      "yjNBHalIrXJQkftv51EMEeSr1dP8cOZF2plCT5kDSx1Lqgk7n8gXp2cx6C2JuBQF": "{\"id\":\"yjNBHalIrXJQkftv51EMEeSr1dP8cOZF2plCT5kDSx1Lqgk7n8gXp2cx6C2JuBQF\",\"ttl\":900,\"created\":\"2016-06-04T20:14:29.010Z\",\"userId\":1}"
+    }
   }
 }
